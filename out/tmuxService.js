@@ -157,6 +157,24 @@ class TmuxService {
             // Don't show error message here.
         }
     }
+    async newWindow(sessionName) {
+        try {
+            await exec(`tmux new-window -t "${sessionName}"`);
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to create new window: ${errorMessage}`);
+        }
+    }
+    async splitPane(targetPane, direction) {
+        try {
+            await exec(`tmux split-window -t "${targetPane}" -${direction}`);
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to split pane: ${errorMessage}`);
+        }
+    }
 }
 exports.TmuxService = TmuxService;
 //# sourceMappingURL=tmuxService.js.map

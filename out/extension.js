@@ -151,7 +151,21 @@ function activate(context) {
             tmuxSessionProvider.refresh();
         }
     });
-    context.subscriptions.push(attachCommand, refreshCommand, renameCommand, newCommand, deleteCommand, killWindowCommand, killPaneCommand);
+    const newWindowCommand = vscode.commands.registerCommand('tmux-session-manager.newWindow', async (item) => {
+        await tmuxService.newWindow(item.session.name);
+        tmuxSessionProvider.refresh();
+    });
+    const splitPaneRightCommand = vscode.commands.registerCommand('tmux-session-manager.splitPaneRight', async (item) => {
+        const targetPane = `${item.pane.sessionName}:${item.pane.windowIndex}.${item.pane.index}`;
+        await tmuxService.splitPane(targetPane, 'h');
+        tmuxSessionProvider.refresh();
+    });
+    const splitPaneDownCommand = vscode.commands.registerCommand('tmux-session-manager.splitPaneDown', async (item) => {
+        const targetPane = `${item.pane.sessionName}:${item.pane.windowIndex}.${item.pane.index}`;
+        await tmuxService.splitPane(targetPane, 'v');
+        tmuxSessionProvider.refresh();
+    });
+    context.subscriptions.push(attachCommand, refreshCommand, renameCommand, newCommand, deleteCommand, killWindowCommand, killPaneCommand, newWindowCommand, splitPaneRightCommand, splitPaneDownCommand);
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

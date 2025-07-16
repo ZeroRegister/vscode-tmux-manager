@@ -71,6 +71,21 @@
         "command": "tmux-session-manager.kill-window",
         "title": "Kill Window",
         "category": "Tmux"
+      },
+      {
+        "command": "tmux-session-manager.newWindow",
+        "title": "New Window",
+        "category": "Tmux"
+      },
+      {
+        "command": "tmux-session-manager.splitPaneRight",
+        "title": "Split Pane Right",
+        "category": "Tmux"
+      },
+      {
+        "command": "tmux-session-manager.splitPaneDown",
+        "title": "Split Pane Down",
+        "category": "Tmux"
       }
     ],
     "menus": {
@@ -95,6 +110,21 @@
         {
           "command": "tmux-session-manager.rename",
           "when": "view == tmux-session-manager && viewItem == tmuxSession",
+          "group": "1_modification"
+        },
+        {
+          "command": "tmux-session-manager.newWindow",
+          "when": "view == tmux-session-manager && viewItem == tmuxSession",
+          "group": "1_modification"
+        },
+        {
+          "command": "tmux-session-manager.splitPaneRight",
+          "when": "view == tmux-session-manager && viewItem == tmuxPane",
+          "group": "1_modification"
+        },
+        {
+          "command": "tmux-session-manager.splitPaneDown",
+          "when": "view == tmux-session-manager && viewItem == tmuxPane",
           "group": "1_modification"
         },
         {

@@ -129,4 +129,22 @@ export class TmuxService {
             // Don't show error message here.
         }
     }
+
+    public async newWindow(sessionName: string): Promise<void> {
+        try {
+            await exec(`tmux new-window -t "${sessionName}"`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to create new window: ${errorMessage}`);
+        }
+    }
+
+    public async splitPane(targetPane: string, direction: 'h' | 'v'): Promise<void> {
+        try {
+            await exec(`tmux split-window -t "${targetPane}" -${direction}`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to split pane: ${errorMessage}`);
+        }
+    }
 }
