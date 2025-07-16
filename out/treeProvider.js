@@ -33,11 +33,13 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TmuxSessionProvider = void 0;
+exports.TmuxPaneTreeItem = exports.TmuxWindowTreeItem = exports.TmuxSessionTreeItem = exports.TmuxSessionProvider = void 0;
 const vscode = __importStar(require("vscode"));
+const path = __importStar(require("path"));
 class TmuxSessionProvider {
-    constructor(tmuxService) {
+    constructor(tmuxService, extensionPath) {
         this.tmuxService = tmuxService;
+        this.extensionPath = extensionPath;
         this._onDidChangeTreeData = new vscode.EventEmitter();
         this.onDidChangeTreeData = this._onDidChangeTreeData.event;
     }
@@ -49,25 +51,57 @@ class TmuxSessionProvider {
     }
     async getChildren(element) {
         if (element) {
+            if (element instanceof TmuxSessionTreeItem) {
+                return element.session.windows.map(win => new TmuxWindowTreeItem(win, this.extensionPath));
+            }
+            if (element instanceof TmuxWindowTreeItem) {
+                return element.window.panes.map(pane => new TmuxPaneTreeItem(pane, this.extensionPath));
+            }
             return [];
         }
-        const sessions = await this.tmuxService.getSessions();
+        const sessions = await this.tmuxService.getTmuxTree();
         if (sessions.length > 0) {
-            return sessions.map(sessionName => {
-                const item = new vscode.TreeItem(sessionName, vscode.TreeItemCollapsibleState.None);
-                item.command = {
-                    command: 'tmux-session-manager.attach',
-                    title: 'Attach to Session',
-                    arguments: [sessionName]
-                };
-                item.contextValue = 'tmuxSession';
-                return item;
-            });
+            return sessions.map(session => new TmuxSessionTreeItem(session));
         }
         else {
-            return [new vscode.TreeItem('No running tmux sessions found.', vscode.TreeItemCollapsibleState.None)];
+            const item = new vscode.TreeItem('No running tmux sessions found.', vscode.TreeItemCollapsibleState.None);
+            // This is a bit of a hack to make it fit the type, but it's a leaf node so it's fine.
+            return [item];
         }
     }
 }
 exports.TmuxSessionProvider = TmuxSessionProvider;
+class TmuxSessionTreeItem extends vscode.TreeItem {
+    constructor(session) {
+        super(session.name, vscode.TreeItemCollapsibleState.Expanded);
+        this.session = session;
+        this.contextValue = 'tmuxSession';
+        this.iconPath = new vscode.ThemeIcon('server-process');
+    }
+}
+exports.TmuxSessionTreeItem = TmuxSessionTreeItem;
+class TmuxWindowTreeItem extends vscode.TreeItem {
+    constructor(window, extensionPath) {
+        super(`${window.index}:${window.name}`, vscode.TreeItemCollapsibleState.Expanded);
+        this.window = window;
+        this.contextValue = 'tmuxWindow';
+        this.iconPath = {
+            light: vscode.Uri.file(path.join(extensionPath, 'resources', 'window.svg')),
+            dark: vscode.Uri.file(path.join(extensionPath, 'resources', 'window.svg'))
+        };
+    }
+}
+exports.TmuxWindowTreeItem = TmuxWindowTreeItem;
+class TmuxPaneTreeItem extends vscode.TreeItem {
+    constructor(pane, extensionPath) {
+        super(`${pane.index}: ${pane.command}`, vscode.TreeItemCollapsibleState.None);
+        this.pane = pane;
+        this.contextValue = 'tmuxPane';
+        this.iconPath = {
+            light: vscode.Uri.file(path.join(extensionPath, 'resources', 'pane.svg')),
+            dark: vscode.Uri.file(path.join(extensionPath, 'resources', 'pane.svg'))
+        };
+    }
+}
+exports.TmuxPaneTreeItem = TmuxPaneTreeItem;
 //# sourceMappingURL=treeProvider.js.map

@@ -39,6 +39,50 @@ const util = __importStar(require("util"));
 const vscode = __importStar(require("vscode"));
 const exec = util.promisify(cp.exec);
 class TmuxService {
+    async getTmuxTree() {
+        try {
+            const [windowsOutput, panesOutput] = await Promise.all([
+                exec('tmux list-windows -a -F "#{session_name}:#{window_index}:#{window_name}"'),
+                exec('tmux list-panes -a -F "#{session_name}:#{window_index}:#{pane_index}:#{pane_current_command}"')
+            ]);
+            const panesByWindow = {};
+            if (panesOutput.stdout) {
+                panesOutput.stdout.trim().split('\n').forEach(line => {
+                    const [sessionName, windowIndex, paneIndex, paneCommand] = line.split(':');
+                    const key = `${sessionName}:${windowIndex}`;
+                    if (!panesByWindow[key]) {
+                        panesByWindow[key] = [];
+                    }
+                    panesByWindow[key].push({ sessionName, windowIndex, index: paneIndex, command: paneCommand });
+                });
+            }
+            const windowsBySession = {};
+            if (windowsOutput.stdout) {
+                windowsOutput.stdout.trim().split('\n').forEach(line => {
+                    const [sessionName, windowIndex, windowName] = line.split(':');
+                    const key = `${sessionName}:${windowIndex}`;
+                    if (!windowsBySession[sessionName]) {
+                        windowsBySession[sessionName] = [];
+                    }
+                    windowsBySession[sessionName].push({
+                        sessionName,
+                        index: windowIndex,
+                        name: windowName,
+                        panes: panesByWindow[key] || []
+                    });
+                });
+            }
+            const sessions = Object.keys(windowsBySession).map(sessionName => ({
+                name: sessionName,
+                windows: windowsBySession[sessionName]
+            }));
+            return sessions;
+        }
+        catch (error) {
+            // tmux not installed or no server running
+            return [];
+        }
+    }
     async getSessions() {
         try {
             const { stdout } = await exec('tmux ls -F "#{session_name}"');
@@ -48,7 +92,6 @@ class TmuxService {
             return [];
         }
         catch (error) {
-            // tmux not installed or no server running
             return [];
         }
     }
@@ -57,7 +100,6 @@ class TmuxService {
             await exec(`tmux rename-session -t "${oldName}" "${newName}"`);
         }
         catch (error) {
-            // Handle error, e.g., show a message to the user
             const errorMessage = error instanceof Error ? error.message : String(error);
             vscode.window.showErrorMessage(`Failed to rename session: ${errorMessage}`);
         }
@@ -69,7 +111,6 @@ class TmuxService {
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             vscode.window.showErrorMessage(`Failed to create session: ${errorMessage}`);
-            // Re-throw the error to be caught by the command handler
             throw error;
         }
     }
@@ -80,6 +121,40 @@ class TmuxService {
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             vscode.window.showErrorMessage(`Failed to delete session: ${errorMessage}`);
+        }
+    }
+    async killWindow(sessionName, windowIndex) {
+        try {
+            await exec(`tmux kill-window -t "${sessionName}:${windowIndex}"`);
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to kill window: ${errorMessage}`);
+        }
+    }
+    async killPane(sessionName, windowIndex, paneIndex) {
+        try {
+            await exec(`tmux kill-pane -t "${sessionName}:${windowIndex}.${paneIndex}"`);
+        }
+        catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to kill pane: ${errorMessage}`);
+        }
+    }
+    async selectWindow(sessionName, windowIndex) {
+        try {
+            await exec(`tmux select-window -t "${sessionName}:${windowIndex}"`);
+        }
+        catch (error) {
+            // Don't show error message here, as it might be confusing if attach works.
+        }
+    }
+    async selectPane(sessionName, windowIndex, paneIndex) {
+        try {
+            await exec(`tmux select-pane -t "${sessionName}:${windowIndex}.${paneIndex}"`);
+        }
+        catch (error) {
+            // Don't show error message here.
         }
     }
 }
