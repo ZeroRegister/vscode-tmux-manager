@@ -1,0 +1,69 @@
+{
+  "name": "tmux-session-manager",
+  "displayName": "Tmux Session Manager",
+  "description": "A simple extension to view and attach to running tmux sessions from the VS Code sidebar.",
+  "version": "0.0.1",
+  "publisher": "vscode-user",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:tmux-session-manager"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "tmux-manager",
+          "title": "Tmux Manager",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "tmux-manager": [
+        {
+          "id": "tmux-session-manager",
+          "name": "Sessions"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "tmux-session-manager.attach",
+        "title": "Attach to Session"
+      },
+      {
+        "command": "tmux-session-manager.refresh",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/light/refresh.svg",
+          "dark": "resources/dark/refresh.svg"
+        }
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "tmux-session-manager.refresh",
+          "when": "view == tmux-session-manager",
+          "group": "navigation"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.14",
+    "@types/vscode": "^1.85.0",
+    "typescript": "^5.3.3"
+  }
+}
