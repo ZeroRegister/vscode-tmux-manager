@@ -6,9 +6,9 @@ export function activate(context: vscode.ExtensionContext) {
     const tmuxService = new TmuxService();
     const tmuxSessionProvider = new TmuxSessionProvider(tmuxService, context.extensionPath);
 
-    vscode.window.registerTreeDataProvider('tmux-session-manager', tmuxSessionProvider);
+    vscode.window.registerTreeDataProvider('vscode-tmux-manager', tmuxSessionProvider);
 
-    const attachCommand = vscode.commands.registerCommand('tmux-session-manager.attach', async (item: TmuxSessionTreeItem | TmuxWindowTreeItem | TmuxPaneTreeItem) => {
+    const attachCommand = vscode.commands.registerCommand('vscode-tmux-manager.attach', async (item: TmuxSessionTreeItem | TmuxWindowTreeItem | TmuxPaneTreeItem) => {
         let sessionName: string;
 
         if (item instanceof TmuxSessionTreeItem) {
@@ -42,11 +42,11 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    const refreshCommand = vscode.commands.registerCommand('tmux-session-manager.refresh', () => {
+    const refreshCommand = vscode.commands.registerCommand('vscode-tmux-manager.refresh', () => {
         tmuxSessionProvider.refresh();
     });
 
-    const renameCommand = vscode.commands.registerCommand('tmux-session-manager.rename', async (item: TmuxSessionTreeItem) => {
+    const renameCommand = vscode.commands.registerCommand('vscode-tmux-manager.rename', async (item: TmuxSessionTreeItem) => {
         const oldName = item.session.name;
         if (!oldName) return;
 
@@ -62,7 +62,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    const newCommand = vscode.commands.registerCommand('tmux-session-manager.new', async () => {
+    const newCommand = vscode.commands.registerCommand('vscode-tmux-manager.new', async () => {
         const sessions = await tmuxService.getSessions();
         let nextId = 0;
         while (sessions.includes(String(nextId))) {
@@ -92,7 +92,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    const deleteCommand = vscode.commands.registerCommand('tmux-session-manager.delete', async (item: TmuxSessionTreeItem) => {
+    const deleteCommand = vscode.commands.registerCommand('vscode-tmux-manager.delete', async (item: TmuxSessionTreeItem) => {
         const sessionName = item.session.name;
         if (!sessionName) return;
 
@@ -108,7 +108,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    const killWindowCommand = vscode.commands.registerCommand('tmux-session-manager.kill-window', async (item: TmuxWindowTreeItem) => {
+    const killWindowCommand = vscode.commands.registerCommand('vscode-tmux-manager.kill-window', async (item: TmuxWindowTreeItem) => {
         const { sessionName, index, name } = item.window;
         const confirmation = await vscode.window.showWarningMessage(
             `Are you sure you want to kill window "${index}:${name}"?`,
@@ -122,7 +122,7 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    const killPaneCommand = vscode.commands.registerCommand('tmux-session-manager.kill-pane', async (item: TmuxPaneTreeItem) => {
+    const killPaneCommand = vscode.commands.registerCommand('vscode-tmux-manager.kill-pane', async (item: TmuxPaneTreeItem) => {
         const { sessionName, windowIndex, index, command } = item.pane;
         const confirmation = await vscode.window.showWarningMessage(
             `Are you sure you want to kill pane "${index}: ${command}"?`,
@@ -136,29 +136,29 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    const newWindowCommand = vscode.commands.registerCommand('tmux-session-manager.newWindow', async (item: TmuxSessionTreeItem) => {
+    const newWindowCommand = vscode.commands.registerCommand('vscode-tmux-manager.newWindow', async (item: TmuxSessionTreeItem) => {
         await tmuxService.newWindow(item.session.name);
         tmuxSessionProvider.refresh();
     });
 
-    const splitPaneRightCommand = vscode.commands.registerCommand('tmux-session-manager.splitPaneRight', async (item: TmuxPaneTreeItem) => {
+    const splitPaneRightCommand = vscode.commands.registerCommand('vscode-tmux-manager.splitPaneRight', async (item: TmuxPaneTreeItem) => {
         const targetPane = `${item.pane.sessionName}:${item.pane.windowIndex}.${item.pane.index}`;
         await tmuxService.splitPane(targetPane, 'h');
         tmuxSessionProvider.refresh();
     });
 
-    const splitPaneDownCommand = vscode.commands.registerCommand('tmux-session-manager.splitPaneDown', async (item: TmuxPaneTreeItem) => {
+    const splitPaneDownCommand = vscode.commands.registerCommand('vscode-tmux-manager.splitPaneDown', async (item: TmuxPaneTreeItem) => {
         const targetPane = `${item.pane.sessionName}:${item.pane.windowIndex}.${item.pane.index}`;
         await tmuxService.splitPane(targetPane, 'v');
         tmuxSessionProvider.refresh();
     });
 
-    const inlineNewWindowCommand = vscode.commands.registerCommand('tmux-session-manager.inline.newWindow', async (item: TmuxSessionTreeItem) => {
+    const inlineNewWindowCommand = vscode.commands.registerCommand('vscode-tmux-manager.inline.newWindow', async (item: TmuxSessionTreeItem) => {
         await tmuxService.newWindow(item.session.name);
         tmuxSessionProvider.refresh();
     });
 
-    const inlineSplitPaneCommand = vscode.commands.registerCommand('tmux-session-manager.inline.splitPane', async (item: TmuxPaneTreeItem) => {
+    const inlineSplitPaneCommand = vscode.commands.registerCommand('vscode-tmux-manager.inline.splitPane', async (item: TmuxPaneTreeItem) => {
         const choice = await vscode.window.showQuickPick(['Split Right', 'Split Down'], {
             placeHolder: 'Select split direction'
         });
