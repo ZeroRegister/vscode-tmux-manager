@@ -35,11 +35,13 @@
     "commands": [
       {
         "command": "tmux-session-manager.attach",
-        "title": "Attach to Session"
+        "title": "Attach to Session",
+        "category": "Tmux"
       },
       {
         "command": "tmux-session-manager.refresh",
-        "title": "Refresh",
+        "title": "Refresh Sessions",
+        "category": "Tmux",
         "icon": {
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
@@ -47,11 +49,31 @@
       },
       {
         "command": "tmux-session-manager.rename",
-        "title": "Rename Session"
+        "title": "Rename Session",
+        "category": "Tmux"
+      },
+      {
+        "command": "tmux-session-manager.new",
+        "title": "New Tmux Session",
+        "category": "Tmux",
+        "icon": {
+          "light": "resources/light/plus.svg",
+          "dark": "resources/dark/plus.svg"
+        }
+      },
+      {
+        "command": "tmux-session-manager.delete",
+        "title": "Delete Session",
+        "category": "Tmux"
       }
     ],
     "menus": {
       "view/title": [
+        {
+          "command": "tmux-session-manager.new",
+          "when": "view == tmux-session-manager",
+          "group": "navigation"
+        },
         {
           "command": "tmux-session-manager.refresh",
           "when": "view == tmux-session-manager",
@@ -63,6 +85,11 @@
           "command": "tmux-session-manager.rename",
           "when": "view == tmux-session-manager && viewItem == tmuxSession",
           "group": "1_modification"
+        },
+        {
+          "command": "tmux-session-manager.delete",
+          "when": "view == tmux-session-manager && viewItem == tmuxSession",
+          "group": "2_destructive"
         }
       ]
     }

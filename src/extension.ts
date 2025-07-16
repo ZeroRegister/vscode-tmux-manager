@@ -38,7 +38,60 @@ export function activate(context: vscode.ExtensionContext) {
         }
     });
 
-    context.subscriptions.push(attachCommand, refreshCommand, renameCommand);
+    const newCommand = vscode.commands.registerCommand('tmux-session-manager.new', async () => {
+        const sessions = await tmuxService.getSessions();
+        let nextId = 0;
+        while (sessions.includes(String(nextId))) {
+            nextId++;
+        }
+
+        const newName = await vscode.window.showInputBox({
+            prompt: 'Enter new session name',
+            value: String(nextId),
+            validateInput: value => {
+                if (!value) {
+                    return 'Session name cannot be empty.';
+                }
+                if (sessions.includes(value)) {
+                    return `Session name "${value}" already exists.`;
+                }
+                return null;
+            }
+        });
+
+        if (newName) {
+            try {
+                await tmuxService.newSession(newName);
+                tmuxSessionProvider.refresh();
+                // Attach to the new session
+                const terminal = vscode.window.createTerminal(newName);
+                terminal.sendText(`tmux attach -t "${newName}"`);
+                terminal.show();
+            } catch (error) {
+                // Error is already shown by the service
+            }
+        }
+    });
+
+    const deleteCommand = vscode.commands.registerCommand('tmux-session-manager.delete', async (item: vscode.TreeItem) => {
+        const sessionName = item.label as string;
+        if (!sessionName) {
+            return;
+        }
+
+        const confirmation = await vscode.window.showWarningMessage(
+            `Are you sure you want to delete the tmux session "${sessionName}"?`,
+            { modal: true },
+            'Delete'
+        );
+
+        if (confirmation === 'Delete') {
+            await tmuxService.deleteSession(sessionName);
+            tmuxSessionProvider.refresh();
+        }
+    });
+
+    context.subscriptions.push(attachCommand, refreshCommand, renameCommand, newCommand, deleteCommand);
 }
 
 export function deactivate() {}

@@ -27,4 +27,24 @@ export class TmuxService {
             vscode.window.showErrorMessage(`Failed to rename session: ${errorMessage}`);
         }
     }
+
+    public async newSession(sessionName: string): Promise<void> {
+        try {
+            await exec(`tmux new-session -d -s "${sessionName}"`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to create session: ${errorMessage}`);
+            // Re-throw the error to be caught by the command handler
+            throw error;
+        }
+    }
+
+    public async deleteSession(sessionName: string): Promise<void> {
+        try {
+            await exec(`tmux kill-session -t "${sessionName}"`);
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to delete session: ${errorMessage}`);
+        }
+    }
 }
