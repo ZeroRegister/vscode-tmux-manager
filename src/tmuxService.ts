@@ -1,5 +1,6 @@
 import * as cp from 'child_process';
 import * as util from 'util';
+import * as vscode from 'vscode';
 
 const exec = util.promisify(cp.exec);
 
@@ -14,6 +15,16 @@ export class TmuxService {
         } catch (error) {
             // tmux not installed or no server running
             return [];
+        }
+    }
+
+    public async renameSession(oldName: string, newName: string): Promise<void> {
+        try {
+            await exec(`tmux rename-session -t "${oldName}" "${newName}"`);
+        } catch (error) {
+            // Handle error, e.g., show a message to the user
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to rename session: ${errorMessage}`);
         }
     }
 }

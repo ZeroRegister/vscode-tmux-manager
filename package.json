@@ -44,6 +44,10 @@
           "light": "resources/light/refresh.svg",
           "dark": "resources/dark/refresh.svg"
         }
+      },
+      {
+        "command": "tmux-session-manager.rename",
+        "title": "Rename Session"
       }
     ],
     "menus": {
@@ -52,6 +56,13 @@
           "command": "tmux-session-manager.refresh",
           "when": "view == tmux-session-manager",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "tmux-session-manager.rename",
+          "when": "view == tmux-session-manager && viewItem == tmuxSession",
+          "group": "inline"
         }
       ]
     }

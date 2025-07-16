@@ -18,7 +18,27 @@ export function activate(context: vscode.ExtensionContext) {
         tmuxSessionProvider.refresh();
     });
 
-    context.subscriptions.push(attachCommand, refreshCommand);
+    const renameCommand = vscode.commands.registerCommand('tmux-session-manager.rename', async (item: vscode.TreeItem) => {
+        const oldName = item.label as string;
+        if (!oldName) {
+            return;
+        }
+
+        const newName = await vscode.window.showInputBox({
+            prompt: `Rename tmux session "${oldName}"`,
+            value: oldName,
+            validateInput: value => {
+                return value ? null : 'Session name cannot be empty.';
+            }
+        });
+
+        if (newName && newName !== oldName) {
+            await tmuxService.renameSession(oldName, newName);
+            tmuxSessionProvider.refresh();
+        }
+    });
+
+    context.subscriptions.push(attachCommand, refreshCommand, renameCommand);
 }
 
 export function deactivate() {}

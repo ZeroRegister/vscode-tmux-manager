@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TmuxService = void 0;
 const cp = __importStar(require("child_process"));
 const util = __importStar(require("util"));
+const vscode = __importStar(require("vscode"));
 const exec = util.promisify(cp.exec);
 class TmuxService {
     async getSessions() {
@@ -49,6 +50,16 @@ class TmuxService {
         catch (error) {
             // tmux not installed or no server running
             return [];
+        }
+    }
+    async renameSession(oldName, newName) {
+        try {
+            await exec(`tmux rename-session -t "${oldName}" "${newName}"`);
+        }
+        catch (error) {
+            // Handle error, e.g., show a message to the user
+            const errorMessage = error instanceof Error ? error.message : String(error);
+            vscode.window.showErrorMessage(`Failed to rename session: ${errorMessage}`);
         }
     }
 }

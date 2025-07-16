@@ -29,6 +29,7 @@ export class TmuxSessionProvider implements vscode.TreeDataProvider<vscode.TreeI
                     title: 'Attach to Session',
                     arguments: [sessionName]
                 };
+                item.contextValue = 'tmuxSession';
                 return item;
             });
         } else {

@@ -60,6 +60,7 @@ class TmuxSessionProvider {
                     title: 'Attach to Session',
                     arguments: [sessionName]
                 };
+                item.contextValue = 'tmuxSession';
                 return item;
             });
         }
