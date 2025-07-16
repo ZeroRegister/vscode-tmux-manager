@@ -165,7 +165,22 @@ function activate(context) {
         await tmuxService.splitPane(targetPane, 'v');
         tmuxSessionProvider.refresh();
     });
-    context.subscriptions.push(attachCommand, refreshCommand, renameCommand, newCommand, deleteCommand, killWindowCommand, killPaneCommand, newWindowCommand, splitPaneRightCommand, splitPaneDownCommand);
+    const inlineNewWindowCommand = vscode.commands.registerCommand('tmux-session-manager.inline.newWindow', async (item) => {
+        await tmuxService.newWindow(item.session.name);
+        tmuxSessionProvider.refresh();
+    });
+    const inlineSplitPaneCommand = vscode.commands.registerCommand('tmux-session-manager.inline.splitPane', async (item) => {
+        const choice = await vscode.window.showQuickPick(['Split Right', 'Split Down'], {
+            placeHolder: 'Select split direction'
+        });
+        if (choice) {
+            const direction = choice === 'Split Right' ? 'h' : 'v';
+            const targetPane = `${item.pane.sessionName}:${item.pane.windowIndex}.${item.pane.index}`;
+            await tmuxService.splitPane(targetPane, direction);
+            tmuxSessionProvider.refresh();
+        }
+    });
+    context.subscriptions.push(attachCommand, refreshCommand, renameCommand, newCommand, deleteCommand, killWindowCommand, killPaneCommand, newWindowCommand, splitPaneRightCommand, splitPaneDownCommand, inlineNewWindowCommand, inlineSplitPaneCommand);
 }
 function deactivate() { }
 //# sourceMappingURL=extension.js.map

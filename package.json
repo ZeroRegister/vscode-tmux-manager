@@ -86,6 +86,29 @@
         "command": "tmux-session-manager.splitPaneDown",
         "title": "Split Pane Down",
         "category": "Tmux"
+      },
+      {
+        "command": "tmux-session-manager.inline.newWindow",
+        "title": "New Window",
+        "category": "Tmux",
+        "icon": {
+          "light": "resources/light/plus.svg",
+          "dark": "resources/dark/plus.svg"
+        }
+      },
+      {
+        "command": "tmux-session-manager.inline.splitPane",
+        "title": "Split Pane",
+        "category": "Tmux",
+        "icon": {
+          "light": "resources/light/plus.svg",
+          "dark": "resources/dark/plus.svg"
+        }
+      },
+      {
+        "command": "tmux-session-manager.kill-pane",
+        "title": "Kill Pane",
+        "category": "Tmux"
       }
     ],
     "menus": {
@@ -102,6 +125,16 @@
         }
       ],
       "view/item/context": [
+        {
+            "command": "tmux-session-manager.inline.newWindow",
+            "when": "view == tmux-session-manager && viewItem == tmuxSession",
+            "group": "inline"
+        },
+        {
+            "command": "tmux-session-manager.inline.splitPane",
+            "when": "view == tmux-session-manager && viewItem == tmuxPane",
+            "group": "inline"
+        },
         {
           "command": "tmux-session-manager.attach",
           "when": "view == tmux-session-manager && (viewItem == tmuxSession || viewItem == tmuxWindow)",
@@ -135,6 +168,11 @@
         {
           "command": "tmux-session-manager.kill-window",
           "when": "view == tmux-session-manager && viewItem == tmuxWindow",
+          "group": "2_destructive"
+        },
+        {
+          "command": "tmux-session-manager.kill-pane",
+          "when": "view == tmux-session-manager && viewItem == tmuxPane",
           "group": "2_destructive"
         }
       ]
