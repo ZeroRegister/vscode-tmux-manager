@@ -1,5 +1,5 @@
 {
-  "name": "tmux-session-manager",
+  "name": "vscode-tmux-manager",
   "displayName": "Tmux Session Manager",
   "description": "A simple extension to view and attach to running tmux sessions from the VS Code sidebar.",
   "version": "0.0.1",
@@ -189,3 +189,4 @@
     "typescript": "^5.3.3"
   }
 }
+
