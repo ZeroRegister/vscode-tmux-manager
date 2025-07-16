@@ -2,7 +2,7 @@
   "name": "vscode-tmux-manager",
   "displayName": "vscode-tmux-manager",
   "description": "A simple extension to view and attach to running tmux sessions from the VS Code sidebar.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "publisher": "ZeroRegister",
   "repository": {
     "type": "git",
