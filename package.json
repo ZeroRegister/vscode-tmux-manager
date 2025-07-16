@@ -5,8 +5,8 @@
   "version": "0.0.1",
   "publisher": "ZeroRegister",
   "repository": {
-  "type": "git",
-  "url": "https://github.com/ZeroRegister/vscode-tmux-manager.git"
+    "type": "git",
+    "url": "https://github.com/ZeroRegister/vscode-tmux-manager.git"
   },
   "engines": {
     "vscode": "^1.85.0"
@@ -190,10 +190,10 @@
   "devDependencies": {
     "@types/node": "^24.0.14",
     "@types/vscode": "^1.85.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.8.3"
   },
   "dependencies": {
+    "tsc": "^2.0.4",
     "vsce": "^2.15.0"
   }
-  
 }
