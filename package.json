@@ -191,9 +191,5 @@
     "@types/node": "^24.0.14",
     "@types/vscode": "^1.85.0",
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "tsc": "^2.0.4",
-    "vsce": "^2.15.0"
   }
 }
