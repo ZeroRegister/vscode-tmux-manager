@@ -62,7 +62,7 @@
         {
           "command": "tmux-session-manager.rename",
           "when": "view == tmux-session-manager && viewItem == tmuxSession",
-          "group": "inline"
+          "group": "1_modification"
         }
       ]
     }
