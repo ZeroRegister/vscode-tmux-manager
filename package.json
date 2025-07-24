@@ -2,7 +2,7 @@
   "name": "vscode-tmux-manager",
   "displayName": "vscode-tmux-manager",
   "description": "A simple extension to view and attach to running tmux sessions from the VS Code sidebar.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "publisher": "ZeroRegister",
   "repository": {
     "type": "git",
@@ -53,8 +53,19 @@
         }
       },
       {
+        "command": "vscode-tmux-manager.toggleAutoRefresh",
+        "title": "Toggle Auto Refresh",
+        "category": "Tmux",
+        "icon": "$(sync)"
+      },
+      {
         "command": "vscode-tmux-manager.rename",
         "title": "Rename Session",
+        "category": "Tmux"
+      },
+      {
+        "command": "vscode-tmux-manager.renameWindow",
+        "title": "Rename Window",
         "category": "Tmux"
       },
       {
@@ -126,9 +137,19 @@
           "command": "vscode-tmux-manager.refresh",
           "when": "view == vscode-tmux-manager",
           "group": "navigation"
+        },
+        {
+          "command": "vscode-tmux-manager.toggleAutoRefresh",
+          "when": "view == vscode-tmux-manager",
+          "group": "1_settings"
         }
       ],
       "view/item/context": [
+        {
+          "command": "vscode-tmux-manager.attach",
+          "when": "view == vscode-tmux-manager && (viewItem == tmuxSession || viewItem == tmuxWindow || viewItem == tmuxPane)",
+          "group": "inline"
+        },
         {
           "command": "vscode-tmux-manager.inline.newWindow",
           "when": "view == vscode-tmux-manager && viewItem == tmuxSession",
@@ -140,13 +161,13 @@
           "group": "inline"
         },
         {
-          "command": "vscode-tmux-manager.attach",
-          "when": "view == vscode-tmux-manager && (viewItem == tmuxSession || viewItem == tmuxWindow)",
-          "group": "inline"
-        },
-        {
           "command": "vscode-tmux-manager.rename",
           "when": "view == vscode-tmux-manager && viewItem == tmuxSession",
+          "group": "1_modification"
+        },
+        {
+          "command": "vscode-tmux-manager.renameWindow",
+          "when": "view == vscode-tmux-manager && viewItem == tmuxWindow",
           "group": "1_modification"
         },
         {
